@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Synonyms Quizlet</title>
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #2c2c54);
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+.card {
+    width: 420px;
+    height: 220px;
+    margin: 20px auto;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #6c5ce7;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #a29bfe;
+}
+
+input {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+
+<h1>🔥 Synonyms Study</h1>
+
+<button onclick="toggleMode()">Switch Mode</button>
+<p id="modeText">Mode: ENG → UKR</p>
+
+<div class="card" onclick="flipCard()" id="card"></div>
+<button onclick="nextCard()">Next</button>
+
+<hr style="margin:40px 0; opacity:0.3;">
+
+<h2>Test Mode</h2>
+<p id="question"></p>
+<input type="text" id="answer">
+<button onclick="checkAnswer()">Check</button>
+<p id="result"></p>
+<p id="score"></p>
+
+<script>
+const words = [
+{eng:"Careful", ua:"обережний"},
+{eng:"Conscientious", ua:"сумлінний"},
+{eng:"Thorough", ua:"ґрунтовний"},
+{eng:"Painstaking", ua:"копіткий"},
+{eng:"Change", ua:"змінювати"},
+{eng:"Alter", ua:"змінювати частково"},
+{eng:"Modify", ua:"модифікувати"},
+{eng:"Shift", ua:"переміщати"},
+{eng:"Convert", ua:"перетворювати"},
+{eng:"Vary", ua:"змінюватися"},
+{eng:"Transform", ua:"повністю змінювати"},
+{eng:"Competition", ua:"змагання"},
+{eng:"Contest", ua:"конкурс"},
+{eng:"Match", ua:"матч"},
+{eng:"Game", ua:"гра"},
+{eng:"Copy", ua:"копіювати"},
+{eng:"Reproduce", ua:"відтворювати"},
+{eng:"Duplicate", ua:"точна копія"},
+{eng:"Clone", ua:"клонувати"},
+{eng:"Replicate", ua:"відтворювати точно"},
+{eng:"Correct", ua:"правильний"},
+{eng:"Accurate", ua:"точний"},
+{eng:"Exact", ua:"абсолютно точний"},
+{eng:"True", ua:"правдивий"},
+{eng:"Disagree", ua:"не погоджуватися"},
+{eng:"Differ", ua:"відрізнятися"},
+{eng:"Argue", ua:"сперечатися"},
+{eng:"Dispute", ua:"оскаржувати"},
+{eng:"Contradict", ua:"суперечити"}
+];
+
+let current = 0;
+let flipped = false;
+let mode = "eng-ua"; // default
+
+let correct = 0;
+let total = 0;
+
+function showCard() {
+    if(mode === "eng-ua") {
+        document.getElementById("card").innerText = words[current].eng;
+    } else {
+        document.getElementById("card").innerText = words[current].ua;
+    }
+}
+showCard();
+
+function flipCard() {
+    if(mode === "eng-ua") {
+        document.getElementById("card").innerText =
+            flipped ? words[current].eng : words[current].ua;
+    } else {
+        document.getElementById("card").innerText =
+            flipped ? words[current].ua : words[current].eng;
+    }
+    flipped = !flipped;
+}
+
+function nextCard() {
+    current = (current + 1) % words.length;
+    flipped = false;
+    showCard();
+}
+
+function toggleMode() {
+    mode = (mode === "eng-ua") ? "ua-eng" : "eng-ua";
+    document.getElementById("modeText").innerText =
+        mode === "eng-ua" ? "Mode: ENG → UKR" : "Mode: UKR → ENG";
+    current = 0;
+    flipped = false;
+    testIndex = 0;
+    correct = 0;
+    total = 0;
+    document.getElementById("score").innerText = "";
+    showCard();
+    loadQuestion();
+}
+
+// TEST MODE
+
+let testIndex = 0;
+
+function loadQuestion() {
+    if(mode === "eng-ua") {
+        document.getElementById("question").innerText =
+            "Translate: " + words[testIndex].eng;
+    } else {
+        document.getElementById("question").innerText =
+            "Переклади: " + words[testIndex].ua;
+    }
+}
+loadQuestion();
+
+function checkAnswer() {
+    let userAnswer = document.getElementById("answer").value.toLowerCase();
+    total++;
+
+    let correctAnswer = (mode === "eng-ua")
+        ? words[testIndex].ua
+        : words[testIndex].eng.toLowerCase();
+
+    if(userAnswer.includes(correctAnswer.split(" ")[0])) {
+        correct++;
+        document.getElementById("result").innerText = "✅ Correct!";
+    } else {
+        document.getElementById("result").innerText =
+            "❌ Correct: " + correctAnswer;
+    }
+
+    document.getElementById("score").innerText =
+        "Score: " + correct + " / " + total;
+
+    document.getElementById("answer").value = "";
+    testIndex = (testIndex + 1) % words.length;
+    loadQuestion();
+}
+</script>
+
+</body>
+</html>
